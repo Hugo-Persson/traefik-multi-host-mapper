@@ -1,0 +1,97 @@
+[server.public]
+ip = "192.168.6"
+
+[server.public.jellystat]
+port = 5009
+
+[server.public.audiobookshelf]
+port = 5001
+
+[server.public.sonarr]
+port = 5004
+
+[server.public.torrent]
+port = 5002
+authelia = true
+
+[server.public.radarr]
+port = 5003
+
+[server.public.readarr]
+port = 5005
+
+[server.public.wizarr]
+port = 5006
+
+[server.public.prowlarr]
+port = 5007
+authelia = true
+
+[server.public.freshrss]
+port = 5010
+
+[server.public.jellyseerr]
+port = 5008
+
+[server.public.bazarr]
+port = 5012
+authelia = true
+
+[server.public.pinchflat]
+port = 8945
+authelia = true
+
+[server.public.tandoor]
+port = 8946
+authelia = false
+
+
+[server.private]
+ip = "192.168.50.2"
+
+[server.private.zigbee2mqtt]
+port = 5002
+authelia = true
+
+[server.private.home]
+port = 8123
+
+[server.private.cronicle]
+port = 3012
+authelia = true
+
+[server.private.firefly]
+port = 5003
+authelia = true
+
+[server.private.firefly-importer]
+port = 5006
+authelia = true
+
+[server.private.ghostfolio]
+port = 5004
+
+[server.media]
+ip = "192.168.50.9"
+
+[server.media.jellyfin]
+port = 8096
+
+[server.proxmox]
+ip = "192.168.50.3"
+
+[server.proxmox.proxmox]
+port = 8006
+authelia = true
+
+[server.archive]
+ip = "192.168.50.10"
+
+[server.archive.paperless]
+port = 5008
+
+[server.archive.calibre]
+port = 8083
+
+[server.archive.couchdb]
+port = 5005
