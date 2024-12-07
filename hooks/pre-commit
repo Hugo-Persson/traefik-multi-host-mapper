@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# vim: filetype=sh
+
+#
+# Run cargo validate
+if git diff --cached --name-only | grep -qE "config\.toml$"; then
+  echo "Rust files staged, running cargo run -- validate..."
+  if ! cargo run -- validate; then
+    echo "Pre-commit hook failed."
+    exit 1
+  fi
+fi
+
+echo "Pre-commit hook passed."
