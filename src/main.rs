@@ -115,8 +115,9 @@ async fn json_endpoint(config: web::Data<Arc<ServiceConfigTranslate>>) -> impl R
 }
 
 async fn start_api(config: ServerConfig) -> std::io::Result<()> {
+    let version = env!("CARGO_PKG_VERSION");
+    println!("Version: {}", version);
     let config = config.service_map();
-    println!("Config: {:?}", config);
     let data = Arc::new(config);
     let port = env::var("PORT").unwrap_or_else(|_| "8080".to_string());
     let listen_url = format!("0.0.0.0:{}", port);
