@@ -2,12 +2,12 @@
 
 # vim: filetype=sh
 
-#
-# Run cargo validate
+# If we have edited the config.toml file, run the validate command before comitting
 if git diff --cached --name-only | grep -qE "config\.toml$"; then
   echo "Rust files staged, running cargo run -- validate..."
   if ! cargo run -- validate; then
-    echo "Pre-commit hook failed."
+    echo "Config is not valid, not committing. Fix and then commit."
+    echo "Run 'cargo run -- validate' to see the errors"
     exit 1
   fi
 fi
