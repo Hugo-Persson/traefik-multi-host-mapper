@@ -1,7 +1,8 @@
 use crate::config::ServerConfig;
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 use clap::Command;
-use config::ServiceConfigTranslate;
+use config::{ParsedServer, ServiceConfigTranslate};
+use discord::send_to_discord_webhook;
 use serde_derive::Serialize;
 use std::{
     collections::{HashMap, HashSet},
@@ -9,6 +10,7 @@ use std::{
     sync::Arc,
 };
 mod config;
+mod discord;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -76,48 +78,75 @@ struct Server {
     url: String,
 }
 
+impl ProviderAPIResponse {
+    fn from_config(servers: &[ParsedServer]) -> Self {
+        let mut routers: HashMap<String, Router> = HashMap::new();
+        let mut services: HashMap<String, Service> = HashMap::new();
+        for server in servers.iter() {
+            for (service_name, service) in server.services.iter().cloned() {
+                let router = Router {
+                    middlewares: service.middlewares(),
+                    entry_points: vec!["websecure".to_string()],
+                    service: service_name.clone(),
+                    rule: format!("Host(`{}.evercode.se`)", service_name.clone()),
+                    tls: Tls {
+                        certresolver: "production".to_string(),
+                    },
+                };
+
+                routers.insert(service_name.clone(), router);
+                let server = Server {
+                    url: format!("http://{}:{}", server.ip, service.port),
+                };
+                let load_balancer = LoadBalancer {
+                    servers: vec![server],
+                };
+                let service = Service { load_balancer };
+                services.insert(service_name, service);
+            }
+        }
+        ProviderAPIResponse {
+            http: Http { routers, services },
+        }
+    }
+}
+
 // Handler for the JSON endpoint
 async fn json_endpoint(config: web::Data<Arc<ServiceConfigTranslate>>) -> impl Responder {
     println!("Received request to /json");
-    let inner_arc = Arc::clone(&config);
 
-    let servers = &*inner_arc; // Now `servers` is of type `Vec<ParsedServer>`
-    let mut routers: HashMap<String, Router> = HashMap::new();
-    let mut services: HashMap<String, Service> = HashMap::new();
-    for server in servers.iter() {
-        for (service_name, service) in server.services.iter().cloned() {
-            let router = Router {
-                middlewares: service.middlewares(),
-                entry_points: vec!["websecure".to_string()],
-                service: service_name.clone(),
-                rule: format!("Host(`{}.evercode.se`)", service_name.clone()),
-                tls: Tls {
-                    certresolver: "production".to_string(),
-                },
-            };
+    HttpResponse::Ok().json(ProviderAPIResponse::from_config(&config))
+}
 
-            routers.insert(service_name.clone(), router);
-            let server = Server {
-                url: format!("http://{}:{}", server.ip, service.port),
-            };
-            let load_balancer = LoadBalancer {
-                servers: vec![server],
-            };
-            let service = Service { load_balancer };
-            services.insert(service_name, service);
+async fn notify_discord(config: &[ParsedServer]) {
+    if let Ok(webhook_url) = env::var("DISCORD_WEBHOOK_URL") {
+        let json_obj = ProviderAPIResponse::from_config(config);
+        let json_str = serde_json::to_string_pretty(&json_obj).unwrap();
+        let msg = format!(
+            r#"
+    Web API has been started
+    JSON Configurations is:
+
+    ```json
+    {}
+    ```
+    "#,
+            json_str
+        );
+        let res = send_to_discord_webhook(webhook_url.as_str(), msg.as_str()).await;
+        if let Err(e) = res {
+            eprintln!("Failed to send message to Discord: {}", e);
         }
+    } else {
+        eprintln!("DISCORD_WEBHOOK_URL is not set")
     }
-    let response = ProviderAPIResponse {
-        http: Http { routers, services },
-    };
-
-    HttpResponse::Ok().json(response)
 }
 
 async fn start_api(config: ServerConfig) -> std::io::Result<()> {
     let version = env!("CARGO_PKG_VERSION");
     println!("Version: {}", version);
     let config = config.service_map();
+    notify_discord(&config).await;
     let data = Arc::new(config);
     let port = env::var("PORT").unwrap_or_else(|_| "8080".to_string());
     let listen_url = format!("0.0.0.0:{}", port);
