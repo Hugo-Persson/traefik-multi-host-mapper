@@ -55,7 +55,7 @@ pub struct ServiceConfig {
 impl ServiceConfig {
     pub fn middlewares(&self) -> Vec<String> {
         if self.authelia {
-            vec!["authelia".to_string()]
+            vec!["authelia@docker".to_string()]
         } else {
             vec![]
         }
