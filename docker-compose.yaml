@@ -1,0 +1,10 @@
+services:
+  traefik-multi-host:
+    image: ghcr.io/hugo-persson/multi-host-config-provider:latest
+    command: "start-api"
+    platform: linux/amd64
+    ports:
+      - 8081:8080
+networks:
+  traefik:
+    external: true
