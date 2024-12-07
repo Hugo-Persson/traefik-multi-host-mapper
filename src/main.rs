@@ -117,26 +117,30 @@ async fn json_endpoint(config: web::Data<Arc<ServiceConfigTranslate>>) -> impl R
 }
 
 async fn notify_discord(config: &[ParsedServer]) {
-    if let Ok(webhook_url) = env::var("DISCORD_WEBHOOK_URL") {
+    let version = env!("CARGO_PKG_VERSION");
+    if let Ok(webhook_url) = env::var("DISCORD_WEBHOOK") {
         let json_obj = ProviderAPIResponse::from_config(config);
         let json_str = serde_json::to_string_pretty(&json_obj).unwrap();
         let msg = format!(
             r#"
-    Web API has been started
-    JSON Configurations is:
+Web API has been started 🚀
 
-    ```json
-    {}
-    ```
+Current version: {}
     "#,
-            json_str
+            version
         );
-        let res = send_to_discord_webhook(webhook_url.as_str(), msg.as_str()).await;
+        let res = send_to_discord_webhook(
+            webhook_url.as_str(),
+            msg.as_str(),
+            Some(json_str),
+            Some("config.json"),
+        )
+        .await;
         if let Err(e) = res {
             eprintln!("Failed to send message to Discord: {}", e);
         }
     } else {
-        eprintln!("DISCORD_WEBHOOK_URL is not set")
+        eprintln!("DISCORD_WEBHOOK is not set")
     }
 }
 
@@ -144,7 +148,9 @@ async fn start_api(config: ServerConfig) -> std::io::Result<()> {
     let version = env!("CARGO_PKG_VERSION");
     println!("Version: {}", version);
     let config = config.service_map();
-    notify_discord(&config).await;
+    if !cfg!(debug_assertions) {
+        notify_discord(&config).await;
+    }
     let data = Arc::new(config);
     let port = env::var("PORT").unwrap_or_else(|_| "8080".to_string());
     let listen_url = format!("0.0.0.0:{}", port);
