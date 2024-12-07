@@ -113,8 +113,6 @@ impl ProviderAPIResponse {
 
 // Handler for the JSON endpoint
 async fn json_endpoint(config: web::Data<Arc<ServiceConfigTranslate>>) -> impl Responder {
-    println!("Received request to /json");
-
     HttpResponse::Ok().json(ProviderAPIResponse::from_config(&config))
 }
 
