@@ -1,5 +1,5 @@
 [server.public]
-ip = "192.168.6"
+ip = "192.168.50.6"
 
 [server.public.jellystat]
 port = 5009
