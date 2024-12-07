@@ -92,7 +92,7 @@ async fn json_endpoint(config: web::Data<Arc<ServiceConfigTranslate>>) -> impl R
                 service: service_name.clone(),
                 rule: format!("Host(`{}.evercode.se`)", service_name.clone()),
                 tls: Tls {
-                    certresolver: "default".to_string(),
+                    certresolver: "production".to_string(),
                 },
             };
 
