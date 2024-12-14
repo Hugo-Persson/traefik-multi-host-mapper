@@ -46,29 +46,29 @@ port = 8946
 authelia = false
 
 
-[server.private]
+[server.laptop]
 ip = "192.168.50.2"
 
-[server.private.zigbee2mqtt]
+[server.laptop.zigbee2mqtt]
 port = 5002
 authelia = true
 
-[server.private.home]
+[server.laptop.home]
 port = 8123
 
-[server.private.cronicle]
+[server.laptop.cronicle]
 port = 3012
 authelia = true
 
-[server.private.firefly]
+[server.laptop.firefly]
 port = 5003
 authelia = true
 
-[server.private.firefly-importer]
+[server.laptop.firefly-importer]
 port = 5006
 authelia = true
 
-[server.private.ghostfolio]
+[server.laptop.ghostfolio]
 port = 5004
 
 [server.media]
@@ -84,14 +84,14 @@ ip = "192.168.50.3"
 port = 8006
 authelia = true
 
-[server.archive]
+[server.secure]
 ip = "192.168.50.10"
 
-[server.archive.paperless]
+[server.secure.paperless]
 port = 5008
 
-[server.archive.calibre]
+[server.secure.calibre]
 port = 8083
 
-[server.archive.couchdb]
+[server.secure.couchdb]
 port = 5005
