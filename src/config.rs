@@ -50,6 +50,9 @@ pub struct ServiceConfig {
     pub port: i32,
     #[serde(default)]
     pub authelia: bool,
+
+    #[serde(default)]
+    pub https: bool,
 }
 
 impl ServiceConfig {

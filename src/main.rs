@@ -95,8 +95,9 @@ impl ProviderAPIResponse {
                 };
 
                 routers.insert(service_name.clone(), router);
+                let protocol = if service.https { "https" } else { "http" };
                 let server = Server {
-                    url: format!("http://{}:{}", server.ip, service.port),
+                    url: format!("{}://{}:{}", protocol, server.ip, service.port),
                 };
                 let load_balancer = LoadBalancer {
                     servers: vec![server],
