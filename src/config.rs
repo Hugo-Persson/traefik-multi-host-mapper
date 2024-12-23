@@ -52,6 +52,9 @@ pub struct ServiceConfig {
     pub authelia: bool,
 
     #[serde(default)]
+    pub authentik: bool,
+
+    #[serde(default)]
     pub https: bool,
 }
 
@@ -59,6 +62,8 @@ impl ServiceConfig {
     pub fn middlewares(&self) -> Vec<String> {
         if self.authelia {
             vec!["authelia@docker".to_string()]
+        } else if self.authentik {
+            vec!["authentik@file".to_string()]
         } else {
             vec![]
         }
