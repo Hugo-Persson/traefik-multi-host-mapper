@@ -9,7 +9,6 @@ port = 5001
 
 [server.public.sonarr]
 port = 5004
-authentik = true
 
 [server.public.torrent]
 port = 5002
