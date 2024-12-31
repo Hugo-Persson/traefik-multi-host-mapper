@@ -83,7 +83,6 @@ ip = "192.168.50.3"
 
 [server.proxmox.proxmox]
 port = 8006
-authelia = true
 https = true
 
 [server.secure]
