@@ -45,6 +45,7 @@ authelia = true
 [server.public.tandoor]
 port = 8946
 authelia = false
+authentik = true
 extra_domains = ["recept.hugopersson.com"]
 
 
