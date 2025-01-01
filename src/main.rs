@@ -94,14 +94,14 @@ impl ProviderAPIResponse {
                 domains.push(default_domain);
                 let rules = domains
                     .iter()
-                    .map(|d| format!("Host(`{}`)", d))
+                    .map(|d| format!("`{}`", d))
                     .collect::<Vec<String>>()
-                    .join(" || ");
+                    .join(", ");
                 let router = Router {
                     middlewares: service.middlewares(),
                     entry_points: vec!["websecure".to_string()],
                     service: service_name.clone(),
-                    rule: rules,
+                    rule: format!("Host({})", rules),
                     tls: Tls {
                         certresolver: "production".to_string(),
                     },
