@@ -91,7 +91,9 @@ impl ProviderAPIResponse {
             for (service_name, service) in server.services.iter().cloned() {
                 let mut domains = service.extra_domains.clone();
                 let default_domain = format!("{}.evercode.se", service_name.clone());
-                domains.push(default_domain);
+                if domains.is_empty() {
+                    domains.push(default_domain.clone());
+                }
                 let rules = domains
                     .iter()
                     .map(|d| format!("`{}`", d))
