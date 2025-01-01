@@ -22,6 +22,7 @@ async fn main() -> std::io::Result<()> {
         .about("Does awesome things")
         .subcommand(Command::new("start-api").about("Starts the API server"))
         .subcommand(Command::new("validate").about("Validates the configuration"))
+        .subcommand(Command::new("print-config").about("Prints the config"))
         .arg_required_else_help(true)
         .get_matches();
 
@@ -32,6 +33,10 @@ async fn main() -> std::io::Result<()> {
     match matches.subcommand() {
         Some(("start-api", _)) => start_api(config).await,
         Some(("validate", _)) => validate(config),
+        Some(("print-config", _)) => {
+            print_config(config);
+            Ok(())
+        }
         _ => {
             eprintln!("Unknown command");
             Ok(())
@@ -84,11 +89,19 @@ impl ProviderAPIResponse {
         let mut services: HashMap<String, Service> = HashMap::new();
         for server in servers.iter() {
             for (service_name, service) in server.services.iter().cloned() {
+                let mut domains = service.extra_domains.clone();
+                let default_domain = format!("{}.evercode.se", service_name.clone());
+                domains.push(default_domain);
+                let rules = domains
+                    .iter()
+                    .map(|d| format!("Host(`{}`)", d))
+                    .collect::<Vec<String>>()
+                    .join(" || ");
                 let router = Router {
                     middlewares: service.middlewares(),
                     entry_points: vec!["websecure".to_string()],
                     service: service_name.clone(),
-                    rule: format!("Host(`{}.evercode.se`)", service_name.clone()),
+                    rule: rules,
                     tls: Tls {
                         certresolver: "production".to_string(),
                     },
@@ -167,6 +180,14 @@ async fn start_api(config: ServerConfig) -> std::io::Result<()> {
     .run()
     .await
     // Add your API starting logic here
+}
+
+fn print_config(config: ServerConfig) {
+    let config = config.service_map();
+    let res = ProviderAPIResponse::from_config(&config);
+
+    let json = serde_json::to_string(&res).unwrap();
+    println!("{}", json);
 }
 
 fn validate(config: ServerConfig) -> std::io::Result<()> {

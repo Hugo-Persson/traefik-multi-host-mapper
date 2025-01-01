@@ -45,7 +45,7 @@ impl ServerConfig {
     }
 }
 
-#[derive(Debug, Deserialize, Clone, Copy)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct ServiceConfig {
     pub port: i32,
     #[serde(default)]
@@ -56,6 +56,9 @@ pub struct ServiceConfig {
 
     #[serde(default)]
     pub https: bool,
+
+    #[serde(default)]
+    pub extra_domains: Vec<String>,
 }
 
 impl ServiceConfig {
