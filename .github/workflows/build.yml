@@ -35,3 +35,9 @@ jobs:
           tags: ghcr.io/hugo-persson/${{ github.event.repository.name }}:latest
           cache-from: type=registry,ref=ghcr.io/hugo-persson/${{ github.event.repository.name }}:cache
           cache-to: type=registry,ref=ghcr.io/hugo-persson/${{ github.event.repository.name }}:cache,mode=max
+
+      - name: Run procedure
+        run: node scripts/deploy-changes-to-komodo.mjs
+        env:
+          KOMODO_API_KEY: ${{ secrets.KOMODO_API_KEY }}
+          KOMODO_API_SECRET: ${{ secrets.KOMODO_API_SECRET }}
