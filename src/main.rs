@@ -96,7 +96,7 @@ impl ProviderAPIResponse {
                     .iter()
                     .map(|d| format!("Host(`{}`)", d))
                     .collect::<Vec<String>>()
-                    .join(" ||");
+                    .join(" || ");
                 let router = Router {
                     middlewares: service.middlewares(),
                     entry_points: vec!["websecure".to_string()],
