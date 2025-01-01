@@ -91,19 +91,17 @@ impl ProviderAPIResponse {
             for (service_name, service) in server.services.iter().cloned() {
                 let mut domains = service.extra_domains.clone();
                 let default_domain = format!("{}.evercode.se", service_name.clone());
-                if domains.is_empty() {
-                    domains.push(default_domain.clone());
-                }
+                domains.push(default_domain.clone());
                 let rules = domains
                     .iter()
-                    .map(|d| format!("`{}`", d))
+                    .map(|d| format!("Host(`{}`)", d))
                     .collect::<Vec<String>>()
-                    .join(", ");
+                    .join(" ||");
                 let router = Router {
                     middlewares: service.middlewares(),
                     entry_points: vec!["websecure".to_string()],
                     service: service_name.clone(),
-                    rule: format!("Host({})", rules),
+                    rule: rules,
                     tls: Tls {
                         certresolver: "production".to_string(),
                     },
