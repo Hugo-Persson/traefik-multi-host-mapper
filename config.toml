@@ -112,7 +112,3 @@ port = 8200
 
 [server.public.duplicati-public]
 port = 8200
-
-
-[server.coordinator.duplicati-coordinator]
-port = 8200
