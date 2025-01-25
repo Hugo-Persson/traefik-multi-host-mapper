@@ -99,6 +99,8 @@ port = 8083
 [server.secure.couchdb]
 port = 5005
 
+[server.secure.immich]
+port = 2283
 
 [server.coordinator]
 ip = "192.168.50.7"
