@@ -116,3 +116,12 @@ authentik = true
 [server.public.duplicati-public]
 port = 8200
 authentik = true
+
+
+[server.monitoring]
+ip = "16.171.250.148"
+
+
+[server.monitoring.beszel]
+port = 8090
+authentik = true
