@@ -124,4 +124,4 @@ ip = "16.171.250.148"
 
 [server.monitoring.beszel]
 port = 8090
-authentik = true
+#authentik = true
