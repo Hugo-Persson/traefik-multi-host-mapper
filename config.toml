@@ -119,7 +119,7 @@ authentik = true
 
 
 [server.monitoring]
-ip = "16.171.250.148"
+ip = "13.50.85.236"
 
 
 [server.monitoring.beszel]
