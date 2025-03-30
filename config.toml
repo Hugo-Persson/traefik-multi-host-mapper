@@ -125,3 +125,8 @@ ip = "13.50.85.236"
 [server.monitoring.beszel]
 port = 8090
 #authentik = true
+
+
+[server.monitoring.uptimekuma]
+port = 3001
+#authentik = true
