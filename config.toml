@@ -102,8 +102,12 @@ port = 5005
 [server.secure.immich]
 port = 2283
 
+[server.secure.gittea]
+port = 3000
+
 [server.coordinator]
 ip = "192.168.50.7"
+
 
 # Duplicati
 #
